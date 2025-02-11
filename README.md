@@ -60,7 +60,7 @@
 1. リポジトリをクローンします。
 
     ```sh
-    公開後置き換え
+    git clone https://github.com/pottama/web-photo-organizer.git
     cd web-photo-organizer
     ```
 
