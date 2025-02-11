@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Move Confirmation</title>
+    <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+    <h1>File Move Confirmation</h1>
+    <form action="/api/move-files" method="POST">
+        <% if (fileList && fileList.length > 0) { %>
+            <h2>File List</h2>
+            <div class="scrollable-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Skip</th>
+                            <th>Original File Path</th>
+                            <th>New File Path</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% fileList.forEach((file, index) => { %>
+                            <tr>
+                                <td class="center-checkbox">
+                                    <input type="checkbox" name="skipFiles" value="<%= index %>">
+                                </td>
+                                <td><%= file.originalPath %></td>
+                                <td><%= file.newPath %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <p>No files to move.</p>
+            <p>Empty folders will be deleted upon execution.</p>
+        <% } %>
+        <input type="hidden" name="sourceFolder" value="<%= sourceFolder %>">
+        <input type="hidden" name="destinationFolder" value="<%= destinationFolder %>">
+        <input type="hidden" name="deleteEmptyFolders" value="<%= deleteEmptyFolders %>">
+        <button type="button" id="submitButton">Move Files</button>
+    </form>
+
+    <button class="back-button" onclick="goBack()">Back</button>
+
+    <script>
+        // フォーム送信時にチェックされたファイルを除外
+        document.getElementById('submitButton').addEventListener('click', function(event) {
+            // ボタンを無効化
+            disableSubmitButton();
+
+            const checkboxes = document.querySelectorAll('input[name="skipFiles"]:checked');
+            const excludedFiles = Array.from(checkboxes).map(checkbox => checkbox.value);
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'excludedFiles';
+            input.value = JSON.stringify(excludedFiles);
+            let form = this.parentElement;
+            form.appendChild(input);
+            form.submit();
+        });
+
+        // ボタンを無効化する
+        function disableSubmitButton() {
+            const submitButton = document.getElementById('submitButton');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Processing...'; // ボタンのテキストを変更
+        }
+
+        function goBack() {
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>

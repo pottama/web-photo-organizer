@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Photo Organizer</title>
+    <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+    <h1>Web Photo Organizer</h1>
+    <form id="folderForm" action="/api/fetch-files" method="POST" onsubmit="saveFormData()">
+        <label for="sourceFolder">Source Folder:</label>
+        <input type="text" id="sourceFolder" name="sourceFolder" required>
+        <label for="destinationFolder">Destination Folder:</label>
+        <input type="text" id="destinationFolder" name="destinationFolder" required>
+        <label for="outputFolderPattern">Output Folder Pattern:</label>
+        <input type="text" id="outputFolderPattern" name="outputFolderPattern" placeholder="<CM>/<YYYY>/<MM>/<DD>">
+        <label for="renameUseCheckbox" class="mb-15">
+            Rename Files Using: 
+            <input type="checkbox" id="renameUseCheckbox" name="renameUseCheckbox" value="1" onclick="toggleRenameUse()">
+        </label>
+        <div id="fileNamePatternDiv" style="display: none;">
+            <label for="fileNamePattern">File Name Pattern:</label>
+            <input type="text" id="fileNamePattern" name="fileNamePattern" class="mb-0" placeholder="P<YYYY><MM><DD><HH><II><SS>-<SN2>">
+        </div>
+        <div class="tooltip accordion">
+            <code>Pattern Explanation: <span class="accordion-icon">+</span></code>
+            <div class="tooltip-content">
+                <code>&lt;CM&gt; = Camera Model</code><br>
+                <code>&lt;YYYY&gt; = Year</code><br>
+                <code>&lt;MM&gt; = Month</code><br>
+                <code>&lt;DD&gt; = Date</code><br>
+                <code>&lt;HH&gt; = Hours</code><br>
+                <code>&lt;II&gt; = Minutes</code><br>
+                <code>&lt;SS&gt; = Seconds</code><br>
+                <code>&lt;SN2&gt; &lt;SN3&gt; = Serial Number 2 or 3 digit *File Name Pattern Only</code><br><br>
+                <code>Use '/' for folder separation. Only alphanumeric characters, '-', and '_' are allowed.</code><br>
+                <code>Prefer the shooting date, if not, the creation date.</code>
+            </div>
+        </div>
+        <div class="tooltip options accordion">
+            <code>Options: <span class="accordion-icon">+</span></code>
+            <div class="tooltip-content">
+                <label for="exifToolUseCheckbox" class="mb-15">
+                    ExifTool Using: 
+                    <input type="checkbox" id="exifToolUseCheckbox" name="exifToolUseCheckbox" value="1">
+                </label>
+                <label for="fileExtension">File Extension:</label>
+                <input type="text" id="fileExtension" name="fileExtension" placeholder="jpg, jpeg, png">
+                <label for="maxFileCount">Max File Count:</label>
+                <input type="text" id="maxFileCount" name="maxFileCount" placeholder="1000" value="1000" required>
+                <label for="deleteEmptyFoldersCheckbox" class="mb-15">
+                    Delete Empty Folders: 
+                    <input type="checkbox" id="deleteEmptyFoldersCheckbox" name="deleteEmptyFoldersCheckbox" value="1">
+                </label>
+            </div>
+        </div>
+        <button type="submit" id="submitButton">Preview</button>
+    </form>
+    <div>
+        <a href="/readme"><code>README</code></a>
+    </div>
+
+    <script>
+        // ページ読み込み時にセッションストレージからデータを読み込む
+        document.addEventListener('DOMContentLoaded', () => {
+            const sourceFolder = sessionStorage.getItem('sourceFolder');
+            const destinationFolder = sessionStorage.getItem('destinationFolder');
+            const outputFolderPattern = sessionStorage.getItem('outputFolderPattern');
+            const renameUseCheckbox = sessionStorage.getItem('renameUseCheckbox');
+            const fileNamePattern = sessionStorage.getItem('fileNamePattern');
+            const exifToolUseCheckbox = sessionStorage.getItem('exifToolUseCheckbox');
+            const fileExtension = sessionStorage.getItem('fileExtension');
+            const maxFileCount = sessionStorage.getItem('maxFileCount');
+            const deleteEmptyFoldersCheckbox = sessionStorage.getItem('deleteEmptyFoldersCheckbox');
+
+            if (sourceFolder) document.getElementById('sourceFolder').value = sourceFolder;
+            if (destinationFolder) document.getElementById('destinationFolder').value = destinationFolder;
+            if (outputFolderPattern) document.getElementById('outputFolderPattern').value = outputFolderPattern;
+            if (renameUseCheckbox === 'true') {
+                document.getElementById('renameUseCheckbox').checked = true;
+                document.getElementById('fileNamePatternDiv').style.display = 'block';
+            }
+            if (fileNamePattern) document.getElementById('fileNamePattern').value = fileNamePattern;
+            if (maxFileCount) document.getElementById('maxFileCount').value = maxFileCount;
+            if (exifToolUseCheckbox === 'true' || exifToolUseCheckbox === null) {
+              document.getElementById('exifToolUseCheckbox').checked = true;
+            }
+            if (fileExtension) document.getElementById('fileExtension').value = fileExtension;
+            if (deleteEmptyFoldersCheckbox === 'true' || deleteEmptyFoldersCheckbox === null) {
+                document.getElementById('deleteEmptyFoldersCheckbox').checked = true;
+            }
+      });
+
+        document.getElementById('folderForm').addEventListener('submit', function(event) {
+            // ボタンを無効化する
+            disableSubmitButton();
+
+            const sourceFolder = document.getElementById('sourceFolder').value.trim();
+            const destinationFolder = document.getElementById('destinationFolder').value.trim();
+
+            if (sourceFolder === destinationFolder) {
+                event.preventDefault();
+                alert('Source Folder and Destination Folder cannot be the same.');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const tooltips = document.querySelectorAll('.tooltip.accordion');
+            tooltips.forEach(function(tooltip) {
+                tooltip.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    let icon = this.querySelector('.accordion-icon');
+                    if (this.classList.contains('active')) {
+                        icon.innerHTML = '-';
+                    } else {
+                        icon.innerHTML = '+';
+                    }
+                });
+            });
+            // .tooltip-content内の要素がクリックされたときにイベントの伝播を停止
+            const tooltipContents = document.querySelectorAll('.tooltip-content');
+            tooltipContents.forEach(function(content) {
+                content.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                });
+            });
+        });
+
+        function saveFormData() {
+            const sourceFolder = document.getElementById('sourceFolder').value;
+            const destinationFolder = document.getElementById('destinationFolder').value;
+            const outputFolderPattern = document.getElementById('outputFolderPattern').value;
+            const renameUseCheckbox = document.getElementById('renameUseCheckbox').checked;
+            const fileNamePattern = document.getElementById('fileNamePattern').value;
+            const exifToolUseCheckbox = document.getElementById('exifToolUseCheckbox').checked;
+            const fileExtension = document.getElementById('fileExtension').value;
+            const maxFileCount = document.getElementById('maxFileCount').value;
+            const deleteEmptyFoldersCheckbox = document.getElementById('deleteEmptyFoldersCheckbox').checked;
+
+            sessionStorage.setItem('sourceFolder', sourceFolder);
+            sessionStorage.setItem('destinationFolder', destinationFolder);
+            sessionStorage.setItem('outputFolderPattern', outputFolderPattern);
+            sessionStorage.setItem('renameUseCheckbox', renameUseCheckbox);
+            sessionStorage.setItem('fileNamePattern', fileNamePattern);
+            sessionStorage.setItem('exifToolUseCheckbox', exifToolUseCheckbox);
+            sessionStorage.setItem('fileExtension', fileExtension);
+            sessionStorage.setItem('maxFileCount', maxFileCount);
+            sessionStorage.setItem('deleteEmptyFoldersCheckbox', deleteEmptyFoldersCheckbox);
+        }
+
+        // ファイル名パターン入力フィールドの表示/非表示を切り替える
+        function toggleRenameUse() {
+            const fileNamePatternDiv = document.getElementById('fileNamePatternDiv');
+            if (document.getElementById('renameUseCheckbox').checked) {
+                fileNamePatternDiv.style.display = 'block';
+            } else {
+                fileNamePatternDiv.style.display = 'none';
+            }
+        }
+
+        // ボタンを無効化する
+        function disableSubmitButton() {
+            const submitButton = document.getElementById('submitButton');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Processing...'; // ボタンのテキストを変更
+        }
+    </script>
+</body>
+</html>

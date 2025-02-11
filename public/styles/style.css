@@ -1,0 +1,208 @@
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    margin: 0;
+    padding: 10px;
+    background-color: #e9ecef;
+    color: #343a40;
+    text-align: center; /* 全体のテキストをセンターに配置 */
+}
+
+h1 {
+    color: #495057;
+}
+
+h2 {
+    margin: 10px auto; /* ボタンをセンターに配置 */
+}
+
+form {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    display: inline-block;
+    min-width: 680px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #495057;
+    text-align: left; /* ラベルは左揃えのまま */
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #f8f9fa;
+    color: #495057;
+}
+
+/* プレースホルダーの色を変更 */
+input::placeholder {
+    color: #a0a0a0; /* 変更したい色を指定 */
+}
+
+/* プレースホルダーの色を変更 (Webkitベースのブラウザ用) */
+input::-webkit-input-placeholder {
+    color: #a0a0a0; /* 変更したい色を指定 */
+}
+
+/* プレースホルダーの色を変更 (Mozilla Firefox用) */
+input::-moz-placeholder {
+    color: #a0a0a0; /* 変更したい色を指定 */
+}
+
+/* プレースホルダーの色を変更 (Microsoft Edge用) */
+input:-ms-input-placeholder {
+    color: #a0a0a0; /* 変更したい色を指定 */
+}
+
+/* プレースホルダーの色を変更 (Internet Explorer用) */
+input::-ms-input-placeholder {
+    color: #a0a0a0; /* 変更したい色を指定 */
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s, transform 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: block; /* ボタンをブロック要素に */
+    margin: 10px auto; /* ボタンをセンターに配置 */
+}
+
+button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+button:active {
+    background-color: #004085;
+    transform: translateY(0);
+}
+
+button.back-button {
+    background-color: #6c757d;
+}
+
+button.back-button:hover {
+    background-color: #5a6268;
+}
+
+button.back-button:active {
+    background-color: #4e555b;
+}
+
+.tooltip {
+    position: relative;
+    display: block;
+    text-align: left;
+    background-color: #d4e7fa;
+    border: 1px solid #a5b7c9;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 10px 0 15px; /* 上下のマージンを追加 */
+}
+
+.options {
+    background-color: #efefef;
+    border: 1px solid #d5d5d5;
+    border-radius: 3px;
+}
+
+.accordion {
+    cursor: pointer;
+}
+
+.tooltip-content {
+    display: none;
+    padding: 10px;
+    cursor: default;
+}
+
+.tooltip.accordion.active .tooltip-content {
+    display: block;
+}
+
+/* チェックボックスを中央に配置するスタイル */
+.center-checkbox {
+    text-align: center;
+}
+
+.mb-0 {
+    margin-bottom: 0 !important;
+}
+
+.mb-15 {
+    margin-bottom: 15px !important;
+}
+
+.scrollable-table {
+    max-height: 600px;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    overflow-y: auto;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+tr:first-child th {
+    border-top: none;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+th {
+    background-color: #f2f2f2;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+tr:hover {
+    background-color: #e9ecef;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: left;
+    background-color: #d4e7fa;
+    border: 1px solid #a5b7c9;
+    border-radius: 8px;
+    padding: 50px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 10px auto 15px; /* 上下のマージンを追加 */
+}
