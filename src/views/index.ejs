@@ -93,16 +93,16 @@
       });
 
         document.getElementById('folderForm').addEventListener('submit', function(event) {
-            // ボタンを無効化する
-            disableSubmitButton();
-
             const sourceFolder = document.getElementById('sourceFolder').value.trim();
             const destinationFolder = document.getElementById('destinationFolder').value.trim();
 
             if (sourceFolder === destinationFolder) {
                 event.preventDefault();
                 alert('Source Folder and Destination Folder cannot be the same.');
+                return;
             }
+            // ボタンを無効化する
+            disableSubmitButton();
         });
 
         document.addEventListener('DOMContentLoaded', function() {
